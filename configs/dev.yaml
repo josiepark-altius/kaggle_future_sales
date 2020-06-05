@@ -1,0 +1,12 @@
+# ------------------------------------ #
+#      DEV config for future sales     #
+# ------------------------------------ #
+
+version:
+  config: "v0.0.1"
+  algorithm: "sales_prediction"
+  created: "2020-06-05"
+
+prediction_algorithm:
+  model: "prophet"
+  
