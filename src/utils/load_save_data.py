@@ -53,3 +53,12 @@ def load_static_files():
     static_files['SHOPS_DATA'] = pd.read_csv(env['SHOPS_FILE'])
 
     return static_files
+
+def load_preprocessed_files():
+
+    env = load_environment()
+    preprocessed_files = {}
+    
+    preprocessed_files['PREPROCESSED_TRAIN_DATA'] = pd.read_csv(env['PREPROCESSED_TRAIN_FILE'], index_col = 0)
+
+    return preprocessed_files

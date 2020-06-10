@@ -1,8 +1,13 @@
+import sys
+sys.path.append('../../')
+
 import pandas as pd
 import os
 import numpy as np
+from dotenv import load_dotenv
 from itertools import product
-from src.utils.load_save_data import load_environment
+from src.utils.load_save_data import load_environment, load_static_files
+
 
 def remove_duplicate_shops(df):
 
@@ -15,7 +20,6 @@ def remove_duplicate_shops(df):
 def make_grouped_dataset(train, save_file = False):
 
     grouped_train = train.groupby(['date_block_num', 'shop_id','item_id'])['date','item_price', 'item_cnt_day'].agg({'date' : ['min','max'], 'item_price' : 'mean', 'item_cnt_day':'sum'}).reset_index()
-    env = load_environment()
 
     if save_file:
         # save to file
@@ -37,13 +41,11 @@ def create_shop_item_month_dataset(train):
         items_in_month = train.loc[train['date_block_num'] == month, 'item_id'].unique()
         cartesian.append(np.array(list(product(*[shops_in_month, items_in_month, [month]])), dtype = 'int32'))
 
-    cartesian_df = pd.DataFrame(np.vpstack(cartesian_df), columns = ['shop_id', 'item_id', 'date_block_num'], dtype = np.int32)
+    cartesian_df = pd.DataFrame(np.vstack(cartesian), columns = ['shop_id', 'item_id', 'date_block_num'], dtype = np.int32)
     
     return cartesian_df
 
 def preprocess_train(train, save_file = False):
-
-    env = load_environment()
 
     train = train[train['item_price'] < 100000]
     train = train[train['item_cnt_day'] < 1000]
@@ -53,18 +55,31 @@ def preprocess_train(train, save_file = False):
 
     train = remove_duplicate_shops(train)
 
-    grouped_train = make_grouped_dataset(train)
+    grouped_train = make_grouped_dataset(train, save_file = save_file)
     cartesian_df = create_shop_item_month_dataset(train)
 
     train = pd.merge(cartesian_df, grouped_train, on = ['shop_id', 'item_id', 'date_block_num'], how = 'left').fillna(0)
     train.sort_values(['date_block_num','shop_id','item_id'], inplace = True)
+
+    # rename columns 
+    train.rename(columns = {'(\'item_price\', \'mean\')' : 'item_price', '(\'item_cnt_day\', \'sum\')' : 'item_cnt'}, inplace = True)
+    
 
     if save_file:
         train.to_csv(env['PREPROCESSED_TRAIN_FILE'])
     
     return train
 
+def main():
+    
+    static_files = load_static_files()
+    _ = preprocess_train(static_files['TRAIN_DATA'], save_file = True)
+
+    return None
+
 if __name__ == '__main__':
 
-    import sys
-    sys.path.append('../')
+    os.chdir('../../')
+    load_dotenv('.env')
+    env = load_environment()
+    main()
