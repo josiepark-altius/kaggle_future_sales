@@ -1,0 +1,11 @@
+{
+    "loss" : "mse",
+    "optimizer" : "adam",
+    "n_input" : 12,
+    "n_features" : 1,
+    "batch_size" : 10,
+    "neurons" : 60,
+    "drop_out" : 0.15,
+    "activation" : "relu",
+    "n_epochs" : 20
+}
