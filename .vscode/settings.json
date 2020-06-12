@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "C:\\Users\\JosiePark\\Anaconda3\\envs\\kaggle_env\\python.exe",
+    "python.pythonPath": "C:\\Users\\JosiePark\\Anaconda3\\envs\\future_sales\\python.exe",
     "python.linting.pylintEnabled": false,
     "python.linting.pycodestyleEnabled": true,
     "python.linting.enabled": true

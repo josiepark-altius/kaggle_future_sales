@@ -31,9 +31,9 @@ class LSTMModel():
         self.n_features = 1
 
         self.scaler = MinMaxScaler()
-        self.scaler.fit(train['item_cnt_day'].reshape(-1,1))
-        train['scaled_item_cnt_day'] = self.scaler.transform(train['item_cnt_day'.reshape(-1,1)])
-        test['scaled_item_cnt_day'] = self.scaler.transform(test['item_cnt_day'].reshape(-1,1))
+        self.scaler.fit(train['item_cnt_day'].values.reshape(1,-1))
+        train['scaled_item_cnt_day'] = self.scaler.transform(train['item_cnt_day'].values.reshape(1,-1))
+        test['scaled_item_cnt_day'] = self.scaler.transform(test['item_cnt_day'].values.reshape(1,-1))
 
         train.drop(['item_cnt_day'], inplace = True, axis = 1)
         test.drop(['item_cnt_day'], inplace = True, axis = 1)
@@ -54,8 +54,6 @@ class LSTMModel():
         self.y_train = df.values[:, -1:]
 
         self.X_test = np.expand_dims(df.values[:,1:], axis = 2)
-
-
     
     def build(self):
         self.model.add(LSTM(self.neurons,
